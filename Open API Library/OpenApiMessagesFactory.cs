@@ -486,6 +486,15 @@ namespace Open_API_Library
             return CreateMessage((uint)_msg.PayloadType, _msg.Build().ToByteString(), clientMsgId);
         }
 
+        public ProtoMessage CreateSymbolsForConversionReqeust(long accountId, long firstAssetId, long lastAssetId, string clientMsgId = null)
+        {
+            var _msg = ProtoOASymbolsForConversionReq.CreateBuilder();
+            _msg.SetCtidTraderAccountId(accountId);
+            _msg.SetFirstAssetId(firstAssetId);
+            _msg.SetLastAssetId(lastAssetId);
+            return CreateMessage((uint)_msg.PayloadType, _msg.Build().ToByteString(), clientMsgId);
+        }
+
         #endregion
     }
 }

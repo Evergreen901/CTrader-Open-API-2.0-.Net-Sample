@@ -45,6 +45,8 @@ namespace Open_API_2._0_Sample
         private IList<ProtoOASymbol> _symbols;
         private IList<ProtoOALightSymbol> _symbolList;
         private ProtoOAReconcileRes _reconcile_response = null;
+        private IList<ProtoOALightSymbol> _symbolListForConversion = null;
+        private ProtoOASpotEvent _spot_event = null;
         private bool _equityWorking = false;
         private long _lastBalance;
 
@@ -169,6 +171,13 @@ namespace Open_API_2._0_Sample
                         break;
                     case ProtoOAPayloadType.PROTO_OA_RECONCILE_RES:
                         _reconcile_response = ProtoOAReconcileRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
+                        break;
+                    case ProtoOAPayloadType.PROTO_OA_SPOT_EVENT:
+                        _spot_event = ProtoOASpotEvent.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
+                        break;
+                    case ProtoOAPayloadType.PROTO_OA_SYMBOLS_FOR_CONVERSION_RES:
+                        var symbols_conversion_response = ProtoOASymbolsForConversionRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
+                        _symbolListForConversion = symbols_conversion_response.SymbolList;
                         break;
                     default:
                         break;
@@ -413,6 +422,21 @@ namespace Open_API_2._0_Sample
 
                 double tickSize = 1 / Math.Pow(10, _symbols[0].Digits);
                 double pipSize = 1 / Math.Pow(10, _symbols[0].PipPosition);
+                double tickValue = _spot_event.Ask;
+                double pipValue = tickValue * (pipSize / tickSize);
+
+                double pos = position.Price - _spot_event.Ask;
+                double pips = Math.Round(pos * Math.Pow(10, _symbols[0].PipPosition), _symbols[0].Digits - _symbols[0].PipPosition);
+                long volume = position.TradeData.Volume / 100;
+                double grossProfit = pips * pipValue * volume;
+
+                double positionSwapMonetary = position.Swap / Math.Pow(10, 8);
+                double positionDoubleCommissionMonetary = (position.Commission * 2) / Math.Pow(10, 8);
+
+                double netProfit = grossProfit + positionDoubleCommissionMonetary + positionSwapMonetary;
+
+                txtAccountInfo.Text += "netProfit : " + netProfit.ToString();
+                txtAccountInfo.Text += Environment.NewLine;
             }
         }
 
