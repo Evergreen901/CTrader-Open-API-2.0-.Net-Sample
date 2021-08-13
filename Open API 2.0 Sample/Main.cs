@@ -44,6 +44,7 @@ namespace Open_API_2._0_Sample
         private List<ProtoOATrader> _traders;
         private IList<ProtoOASymbol> _symbols;
         private IList<ProtoOALightSymbol> _symbolList;
+        private ProtoOAReconcileRes _reconcile_response = null;
         private long _lastBalance;
 
         public ProtoOALightSymbol GetLightSymbolById(long symbolId)
@@ -161,26 +162,7 @@ namespace Open_API_2._0_Sample
                         _symbolList = symbols_list.SymbolList;
                         break;
                     case ProtoOAPayloadType.PROTO_OA_RECONCILE_RES:
-                        var reconcile_response = ProtoOAReconcileRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
-
-                        foreach (var order in reconcile_response.OrderList)
-                        {
-                            _symbols = null;
-                            var msg = msgFactory.CreateSymbolByIdRequest(_accountID, order.TradeData.SymbolId);
-                            Transmit(msg);
-
-                            while (_symbols == null)
-                            {
-                                Thread.Sleep(100);
-                            }
-                            var lightSymbol = GetLightSymbolById(_symbols[0].SymbolId);
-
-                            double tickSize = 1 / Math.Pow(10, _symbols[0].Digits);
-                            double pipSize = 1 / Math.Pow(10, _symbols[0].PipPosition);
-                        }
-                        foreach (var position in reconcile_response.PositionList)
-                        {
-                        }
+                        _reconcile_response = ProtoOAReconcileRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
                         break;
                     default:
                         break;
@@ -402,6 +384,28 @@ namespace Open_API_2._0_Sample
             var msgFactory = new OpenApiMessagesFactory();
             var msg = msgFactory.CreateReconcileRequest(_accountID);
             Transmit(msg);
+
+            while (_reconcile_response == null)
+            {
+                Thread.Sleep(100);
+            }
+
+            foreach (var position in _reconcile_response.PositionList)
+            {
+                _symbols = null;
+                msg = msgFactory.CreateSymbolByIdRequest(_accountID, position.TradeData.SymbolId);
+                Transmit(msg);
+
+                while (_symbols == null)
+                {
+                    Thread.Sleep(100);
+                }
+
+                var lightSymbol = GetLightSymbolById(_symbols[0].SymbolId);
+
+                double tickSize = 1 / Math.Pow(10, _symbols[0].Digits);
+                double pipSize = 1 / Math.Pow(10, _symbols[0].PipPosition);
+            }
         }
 
         private void btnSymbolCategory_Click(object sender, EventArgs e)
