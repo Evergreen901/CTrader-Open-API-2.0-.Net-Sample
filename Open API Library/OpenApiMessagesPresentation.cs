@@ -96,6 +96,13 @@ namespace Connect_API.Trading
                         sbDeals.Append("ID: " + deal.DealId + Environment.NewLine);
                         sbDeals.Append("Status: " + deal.DealStatus + Environment.NewLine);
                         sbDeals.Append("Volume: " + deal.Volume + Environment.NewLine);
+                        sbDeals.Append("ClosePositionDetail: " + deal.ClosePositionDetail.ToString() + Environment.NewLine);
+                        sbDeals.Append("filledVolume: " + deal.FilledVolume + Environment.NewLine);
+                        sbDeals.Append("executionTimestamp: " + deal.ExecutionTimestamp + Environment.NewLine);
+                        sbDeals.Append("executionPrice: " + deal.ExecutionPrice + Environment.NewLine);
+                        sbDeals.Append("tradeSide: " + deal.TradeSide + Environment.NewLine);
+                        sbDeals.Append("baseToUsdConversionRate: " + deal.BaseToUsdConversionRate + Environment.NewLine);
+                        sbDeals.Append("commission: " + deal.Commission + Environment.NewLine);
                     }
                     return "DealList{"+ sbDeals.ToString()+"}";
                 case ProtoOAPayloadType.PROTO_OA_RECONCILE_REQ:

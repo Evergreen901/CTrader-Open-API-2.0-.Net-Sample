@@ -233,7 +233,7 @@ namespace Open_API_2._0_Sample
         {
             var msgFactory = new OpenApiMessagesFactory();
             //    var msg = msgFactory.CreateDealsListRequest(_accountID, 1526342400, 1540000000000);
-            var startDate = new DateTimeOffset(DateTime.Now.AddDays(-7));
+            var startDate = new DateTimeOffset(DateTime.Now.AddDays(-1));
             var now = new DateTimeOffset(DateTime.Now);
             var msg = msgFactory.CreateDealsListRequest(_accountID, startDate.ToUnixTimeMilliseconds(), now.ToUnixTimeMilliseconds());
             Transmit(msg);
