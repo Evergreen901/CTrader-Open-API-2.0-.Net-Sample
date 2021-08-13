@@ -157,6 +157,10 @@ namespace Open_API_2._0_Sample
                             break;
                         }
                         break;
+                    case ProtoOAPayloadType.PROTO_OA_SYMBOL_BY_ID_RES:
+                        var symbols= ProtoOASymbolByIdRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
+                        _symbols = symbols.SymbolList;
+                        break;
                     case ProtoOAPayloadType.PROTO_OA_SYMBOLS_LIST_RES:
                         var symbols_list = ProtoOASymbolsListRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
                         _symbolList = symbols_list.SymbolList;
