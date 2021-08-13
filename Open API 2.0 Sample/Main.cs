@@ -43,7 +43,22 @@ namespace Open_API_2._0_Sample
         private IList<ProtoOACtidTraderAccount> _accounts;
         private List<ProtoOATrader> _traders;
         private IList<ProtoOASymbol> _symbols;
-        private long lastBalance;
+        private IList<ProtoOALightSymbol> _symbolList;
+        private long _lastBalance;
+
+        public ProtoOALightSymbol GetLightSymbolById(long symbolId)
+        {
+            ProtoOALightSymbol ret = null;
+            foreach (var symbol in _symbolList)
+            {
+                if (symbol.SymbolId == symbolId)
+                {
+                    ret = symbol;
+                    break;
+                }
+            }
+            return ret;
+        }
 
         public Main()
         {
@@ -137,9 +152,13 @@ namespace Open_API_2._0_Sample
                         {
                             var deal = deal_list.DealList[i];
                             if (deal.HasClosePositionDetail == false) continue;
-                            lastBalance = deal.ClosePositionDetail.Balance;
+                            _lastBalance = deal.ClosePositionDetail.Balance;
                             break;
                         }
+                        break;
+                    case ProtoOAPayloadType.PROTO_OA_SYMBOLS_LIST_RES:
+                        var symbols_list = ProtoOASymbolsListRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
+                        _symbolList = symbols_list.SymbolList;
                         break;
                     case ProtoOAPayloadType.PROTO_OA_RECONCILE_RES:
                         var reconcile_response = ProtoOAReconcileRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
@@ -154,7 +173,7 @@ namespace Open_API_2._0_Sample
                             {
                                 Thread.Sleep(100);
                             }
-
+                            var lightSymbol = GetLightSymbolById(_symbols[0].SymbolId);
 
                             double tickSize = 1 / Math.Pow(10, _symbols[0].Digits);
                             double pipSize = 1 / Math.Pow(10, _symbols[0].PipPosition);
