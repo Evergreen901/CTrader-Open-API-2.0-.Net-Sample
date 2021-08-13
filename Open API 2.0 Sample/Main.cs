@@ -45,6 +45,7 @@ namespace Open_API_2._0_Sample
         private IList<ProtoOASymbol> _symbols;
         private IList<ProtoOALightSymbol> _symbolList;
         private ProtoOAReconcileRes _reconcile_response = null;
+        private bool _equityWorking = false;
         private long _lastBalance;
 
         public ProtoOALightSymbol GetLightSymbolById(long symbolId)
@@ -164,6 +165,7 @@ namespace Open_API_2._0_Sample
                     case ProtoOAPayloadType.PROTO_OA_SYMBOLS_LIST_RES:
                         var symbols_list = ProtoOASymbolsListRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
                         _symbolList = symbols_list.SymbolList;
+                        _equityWorking = true;
                         break;
                     case ProtoOAPayloadType.PROTO_OA_RECONCILE_RES:
                         _reconcile_response = ProtoOAReconcileRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
@@ -385,6 +387,8 @@ namespace Open_API_2._0_Sample
 
         private void timer3_Tick(object sender, EventArgs e)
         {
+            if (_equityWorking == false)
+                return;
             var msgFactory = new OpenApiMessagesFactory();
             var msg = msgFactory.CreateReconcileRequest(_accountID);
             Transmit(msg);
