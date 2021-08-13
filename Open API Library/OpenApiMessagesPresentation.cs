@@ -84,6 +84,17 @@ namespace Connect_API.Trading
                         sbSymbolByID.Append("ID: " + symbol.SymbolId + Environment.NewLine);
                     }
                     return "Symbols{" + sbSymbolByID.ToString() + "}";
+                case ProtoOAPayloadType.PROTO_OA_SYMBOL_CATEGORY_REQ:
+                    return "GetSymbolCategoryList";
+                case ProtoOAPayloadType.PROTO_OA_SYMBOL_CATEGORY_RES:
+                    var symbol_category_list = ProtoOASymbolCategoryListRes.CreateBuilder().MergeFrom(msg.Payload).Build();
+                    var sbSymbolCategoryList = new StringBuilder();
+                    foreach (var category in symbol_category_list.SymbolCategoryList)
+                    {
+                        sbSymbolCategoryList.Append("ID: " + category.Id + Environment.NewLine);
+                        sbSymbolCategoryList.Append("name: " + category.Name + Environment.NewLine);
+                    }
+                    return "Symbols{" + sbSymbolCategoryList.ToString() + "}";
                 case ProtoOAPayloadType.PROTO_OA_EXECUTION_EVENT:
                     return OpenApiExecEventsToString(msg);
                 case ProtoOAPayloadType.PROTO_OA_DEAL_LIST_REQ:
@@ -91,8 +102,10 @@ namespace Connect_API.Trading
                 case ProtoOAPayloadType.PROTO_OA_DEAL_LIST_RES:
                     var deal_list = ProtoOADealListRes.CreateBuilder().MergeFrom(msg.Payload).Build();
                     var sbDeals = new StringBuilder();
-                    foreach (var deal in deal_list.DealList)
+                    sbDeals.Append(Environment.NewLine);
+                    for (var i = deal_list.DealList.Count - 1; i >= 0; i--)
                     {
+                        var deal = deal_list.DealList[i];
                         if (deal.HasClosePositionDetail == false) continue;
                         /*sbDeals.Append("ID: " + deal.DealId + Environment.NewLine);
                         sbDeals.Append("Status: " + deal.DealStatus + Environment.NewLine);
@@ -105,7 +118,7 @@ namespace Connect_API.Trading
                         sbDeals.Append("baseToUsdConversionRate: " + deal.BaseToUsdConversionRate + Environment.NewLine);
                         sbDeals.Append("commission: " + deal.Commission + Environment.NewLine);*/
                         sbDeals.Append("balance: " + deal.ClosePositionDetail.Balance + Environment.NewLine);
-                        DateTime closedTime = new DateTime(deal.ExecutionTimestamp);
+                        var closedTime = DateTimeOffset.FromUnixTimeMilliseconds(deal.ExecutionTimestamp);
                         sbDeals.Append("closedTime: " + closedTime.ToString("yyyy-MM-dd hh:mm:ss.fff") + Environment.NewLine);
                     }
                     return "DealList{"+ sbDeals.ToString()+"}";

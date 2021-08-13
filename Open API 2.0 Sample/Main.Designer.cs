@@ -51,6 +51,7 @@
             this.lblVolume = new System.Windows.Forms.Label();
             this.btnClear = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.btnOrderHistory = new System.Windows.Forms.Button();
             this.lblAccounts = new System.Windows.Forms.Label();
             this.cbAccounts = new System.Windows.Forms.ComboBox();
             this.lblTakeProfit = new System.Windows.Forms.Label();
@@ -60,10 +61,11 @@
             this.txtStopLoss = new System.Windows.Forms.TextBox();
             this.txtPositionIDTPSL = new System.Windows.Forms.TextBox();
             this.btnAmentSLTP = new System.Windows.Forms.Button();
-            this.timer2 = new System.Windows.Forms.Timer(this.components);
-            this.txtMessages = new System.Windows.Forms.TextBox();
             this.txtAccountInfo = new System.Windows.Forms.TextBox();
-            this.btnOrderHistory = new System.Windows.Forms.Button();
+            this.txtMessages = new System.Windows.Forms.TextBox();
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.timer3 = new System.Windows.Forms.Timer(this.components);
+            this.btnSymbolCategory = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -277,6 +279,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.btnSymbolCategory);
             this.splitContainer1.Panel1.Controls.Add(this.btnOrderHistory);
             this.splitContainer1.Panel1.Controls.Add(this.lblAccounts);
             this.splitContainer1.Panel1.Controls.Add(this.cbAccounts);
@@ -315,6 +318,16 @@
             this.splitContainer1.Size = new System.Drawing.Size(1186, 575);
             this.splitContainer1.SplitterDistance = 364;
             this.splitContainer1.TabIndex = 23;
+            // 
+            // btnOrderHistory
+            // 
+            this.btnOrderHistory.Location = new System.Drawing.Point(620, 338);
+            this.btnOrderHistory.Name = "btnOrderHistory";
+            this.btnOrderHistory.Size = new System.Drawing.Size(145, 23);
+            this.btnOrderHistory.TabIndex = 32;
+            this.btnOrderHistory.Text = "Get Closed Order History";
+            this.btnOrderHistory.UseVisualStyleBackColor = true;
+            this.btnOrderHistory.Click += new System.EventHandler(this.btnOrderHistory_Click);
             // 
             // lblAccounts
             // 
@@ -392,11 +405,15 @@
             this.btnAmentSLTP.UseVisualStyleBackColor = true;
             this.btnAmentSLTP.Click += new System.EventHandler(this.btnAmentSLTP_Click);
             // 
-            // timer2
+            // txtAccountInfo
             // 
-            this.timer2.Enabled = true;
-            this.timer2.Interval = 5000;
-            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            this.txtAccountInfo.Dock = System.Windows.Forms.DockStyle.Left;
+            this.txtAccountInfo.Location = new System.Drawing.Point(620, 0);
+            this.txtAccountInfo.Multiline = true;
+            this.txtAccountInfo.Name = "txtAccountInfo";
+            this.txtAccountInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtAccountInfo.Size = new System.Drawing.Size(566, 207);
+            this.txtAccountInfo.TabIndex = 1;
             // 
             // txtMessages
             // 
@@ -408,25 +425,26 @@
             this.txtMessages.Size = new System.Drawing.Size(620, 207);
             this.txtMessages.TabIndex = 0;
             // 
-            // txtAccountInfo
+            // timer2
             // 
-            this.txtAccountInfo.Dock = System.Windows.Forms.DockStyle.Left;
-            this.txtAccountInfo.Location = new System.Drawing.Point(620, 0);
-            this.txtAccountInfo.Multiline = true;
-            this.txtAccountInfo.Name = "txtAccountInfo";
-            this.txtAccountInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtAccountInfo.Size = new System.Drawing.Size(566, 207);
-            this.txtAccountInfo.TabIndex = 1;
+            this.timer2.Enabled = true;
+            this.timer2.Interval = 5000;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
-            // btnOrderHistory
+            // timer3
             // 
-            this.btnOrderHistory.Location = new System.Drawing.Point(620, 338);
-            this.btnOrderHistory.Name = "btnOrderHistory";
-            this.btnOrderHistory.Size = new System.Drawing.Size(145, 23);
-            this.btnOrderHistory.TabIndex = 32;
-            this.btnOrderHistory.Text = "Get Closed Order History";
-            this.btnOrderHistory.UseVisualStyleBackColor = true;
-            this.btnOrderHistory.Click += new System.EventHandler(this.btnOrderHistory_Click);
+            this.timer3.Interval = 2000;
+            this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
+            // 
+            // btnSymbolCategory
+            // 
+            this.btnSymbolCategory.Location = new System.Drawing.Point(782, 338);
+            this.btnSymbolCategory.Name = "btnSymbolCategory";
+            this.btnSymbolCategory.Size = new System.Drawing.Size(136, 23);
+            this.btnSymbolCategory.TabIndex = 33;
+            this.btnSymbolCategory.Text = "Get SymbolCategory";
+            this.btnSymbolCategory.UseVisualStyleBackColor = true;
+            this.btnSymbolCategory.Click += new System.EventHandler(this.btnSymbolCategory_Click);
             // 
             // Main
             // 
@@ -484,6 +502,8 @@
         private System.Windows.Forms.TextBox txtAccountInfo;
         private System.Windows.Forms.TextBox txtMessages;
         private System.Windows.Forms.Button btnOrderHistory;
+        private System.Windows.Forms.Timer timer3;
+        private System.Windows.Forms.Button btnSymbolCategory;
     }
 }
 

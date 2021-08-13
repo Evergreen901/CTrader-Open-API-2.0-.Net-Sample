@@ -42,6 +42,8 @@ namespace Open_API_2._0_Sample
         private static long testPositionId = -1;
         private IList<ProtoOACtidTraderAccount> _accounts;
         private List<ProtoOATrader> _traders;
+        private IList<ProtoOASymbol> _symbols;
+        private long lastBalance;
 
         public Main()
         {
@@ -129,7 +131,38 @@ namespace Open_API_2._0_Sample
                         var trader = ProtoOATraderRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
                         _traders.Add(trader.Trader);
                         break;
+                    case ProtoOAPayloadType.PROTO_OA_DEAL_LIST_RES:
+                        var deal_list = ProtoOADealListRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
+                        for (var i = deal_list.DealList.Count - 1; i >= 0; i--)
+                        {
+                            var deal = deal_list.DealList[i];
+                            if (deal.HasClosePositionDetail == false) continue;
+                            lastBalance = deal.ClosePositionDetail.Balance;
+                            break;
+                        }
+                        break;
+                    case ProtoOAPayloadType.PROTO_OA_RECONCILE_RES:
+                        var reconcile_response = ProtoOAReconcileRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
 
+                        foreach (var order in reconcile_response.OrderList)
+                        {
+                            _symbols = null;
+                            var msg = msgFactory.CreateSymbolByIdRequest(_accountID, order.TradeData.SymbolId);
+                            Transmit(msg);
+
+                            while (_symbols == null)
+                            {
+                                Thread.Sleep(100);
+                            }
+
+
+                            double tickSize = 1 / Math.Pow(10, _symbols[0].Digits);
+                            double pipSize = 1 / Math.Pow(10, _symbols[0].PipPosition);
+                        }
+                        foreach (var position in reconcile_response.PositionList)
+                        {
+                        }
+                        break;
                     default:
                         break;
                 };
@@ -342,6 +375,20 @@ namespace Open_API_2._0_Sample
             var startDate = new DateTimeOffset(DateTime.Now.AddDays(-1));
             var now = new DateTimeOffset(DateTime.Now);
             var msg = msgFactory.CreateDealsListRequest(_accountID, startDate.ToUnixTimeMilliseconds(), now.ToUnixTimeMilliseconds());
+            Transmit(msg);
+        }
+
+        private void timer3_Tick(object sender, EventArgs e)
+        {
+            var msgFactory = new OpenApiMessagesFactory();
+            var msg = msgFactory.CreateReconcileRequest(_accountID);
+            Transmit(msg);
+        }
+
+        private void btnSymbolCategory_Click(object sender, EventArgs e)
+        {
+            var msgFactory = new OpenApiMessagesFactory();
+            var msg = msgFactory.CreateSymbolCategoryListRequest(_accountID);
             Transmit(msg);
         }
     }
