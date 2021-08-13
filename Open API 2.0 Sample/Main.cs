@@ -100,6 +100,11 @@ namespace Open_API_2._0_Sample
                 var msgFactory = new OpenApiMessagesFactory();
                 var protoMessage = msgFactory.GetMessage(_message);
                 messagesQueue.Enqueue("Received: " + OpenApiMessagesPresentation.ToString(protoMessage));
+                if ((ProtoOAPayloadType)protoMessage.PayloadType == ProtoOAPayloadType.PROTO_OA_DEAL_LIST_RES)
+                {
+                    txtAccountInfo.Text += OpenApiMessagesPresentation.ToString(protoMessage);
+                    txtAccountInfo.Text += Environment.NewLine;
+                }
                 switch ((ProtoOAPayloadType)protoMessage.PayloadType)
                 {
                     case ProtoOAPayloadType.PROTO_OA_EXECUTION_EVENT:
@@ -328,6 +333,16 @@ namespace Open_API_2._0_Sample
         {
             var msgFactory = new OpenApiMessagesFactory();
             _accountID = (long)cbAccounts.SelectedItem;
+        }
+
+        private void btnOrderHistory_Click(object sender, EventArgs e)
+        {
+            txtAccountInfo.Text = "";
+            var msgFactory = new OpenApiMessagesFactory();
+            var startDate = new DateTimeOffset(DateTime.Now.AddDays(-1));
+            var now = new DateTimeOffset(DateTime.Now);
+            var msg = msgFactory.CreateDealsListRequest(_accountID, startDate.ToUnixTimeMilliseconds(), now.ToUnixTimeMilliseconds());
+            Transmit(msg);
         }
     }
 }

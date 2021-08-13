@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.txtMessages = new System.Windows.Forms.TextBox();
             this.btnAuthorizeApplication = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.btnGetAccountsList = new System.Windows.Forms.Button();
@@ -62,21 +61,14 @@
             this.txtPositionIDTPSL = new System.Windows.Forms.TextBox();
             this.btnAmentSLTP = new System.Windows.Forms.Button();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.txtMessages = new System.Windows.Forms.TextBox();
+            this.txtAccountInfo = new System.Windows.Forms.TextBox();
+            this.btnOrderHistory = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // txtMessages
-            // 
-            this.txtMessages.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtMessages.Location = new System.Drawing.Point(0, 0);
-            this.txtMessages.Multiline = true;
-            this.txtMessages.Name = "txtMessages";
-            this.txtMessages.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtMessages.Size = new System.Drawing.Size(1186, 207);
-            this.txtMessages.TabIndex = 0;
             // 
             // btnAuthorizeApplication
             // 
@@ -285,6 +277,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.btnOrderHistory);
             this.splitContainer1.Panel1.Controls.Add(this.lblAccounts);
             this.splitContainer1.Panel1.Controls.Add(this.cbAccounts);
             this.splitContainer1.Panel1.Controls.Add(this.lblTakeProfit);
@@ -317,6 +310,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.txtAccountInfo);
             this.splitContainer1.Panel2.Controls.Add(this.txtMessages);
             this.splitContainer1.Size = new System.Drawing.Size(1186, 575);
             this.splitContainer1.SplitterDistance = 364;
@@ -404,6 +398,36 @@
             this.timer2.Interval = 5000;
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
+            // txtMessages
+            // 
+            this.txtMessages.Dock = System.Windows.Forms.DockStyle.Left;
+            this.txtMessages.Location = new System.Drawing.Point(0, 0);
+            this.txtMessages.Multiline = true;
+            this.txtMessages.Name = "txtMessages";
+            this.txtMessages.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtMessages.Size = new System.Drawing.Size(620, 207);
+            this.txtMessages.TabIndex = 0;
+            // 
+            // txtAccountInfo
+            // 
+            this.txtAccountInfo.Dock = System.Windows.Forms.DockStyle.Left;
+            this.txtAccountInfo.Location = new System.Drawing.Point(620, 0);
+            this.txtAccountInfo.Multiline = true;
+            this.txtAccountInfo.Name = "txtAccountInfo";
+            this.txtAccountInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtAccountInfo.Size = new System.Drawing.Size(566, 207);
+            this.txtAccountInfo.TabIndex = 1;
+            // 
+            // btnOrderHistory
+            // 
+            this.btnOrderHistory.Location = new System.Drawing.Point(620, 338);
+            this.btnOrderHistory.Name = "btnOrderHistory";
+            this.btnOrderHistory.Size = new System.Drawing.Size(145, 23);
+            this.btnOrderHistory.TabIndex = 32;
+            this.btnOrderHistory.Text = "Get Closed Order History";
+            this.btnOrderHistory.UseVisualStyleBackColor = true;
+            this.btnOrderHistory.Click += new System.EventHandler(this.btnOrderHistory_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -425,8 +449,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.TextBox txtMessages;
         private System.Windows.Forms.Button btnAuthorizeApplication;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button btnGetAccountsList;
@@ -459,6 +481,9 @@
         private System.Windows.Forms.Timer timer2;
         private System.Windows.Forms.Label lblAccounts;
         private System.Windows.Forms.ComboBox cbAccounts;
+        private System.Windows.Forms.TextBox txtAccountInfo;
+        private System.Windows.Forms.TextBox txtMessages;
+        private System.Windows.Forms.Button btnOrderHistory;
     }
 }
 
