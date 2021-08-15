@@ -134,11 +134,6 @@ namespace Open_API_2._0_Sample
                 var msgFactory = new OpenApiMessagesFactory();
                 var protoMessage = msgFactory.GetMessage(_message);
                 messagesQueue.Enqueue("Received: " + OpenApiMessagesPresentation.ToString(protoMessage));
-                if ((ProtoOAPayloadType)protoMessage.PayloadType == ProtoOAPayloadType.PROTO_OA_DEAL_LIST_RES)
-                {
-                    txtAccountInfo.Text += OpenApiMessagesPresentation.ToString(protoMessage);
-                    txtAccountInfo.Text += Environment.NewLine;
-                }
                 switch ((ProtoOAPayloadType)protoMessage.PayloadType)
                 {
                     case ProtoOAPayloadType.PROTO_OA_EXECUTION_EVENT:
@@ -444,7 +439,7 @@ namespace Open_API_2._0_Sample
                 Thread.Sleep(100);
             }
 
-            double equity = _lastBalance;
+            double equity = _lastBalance / 100.0;
             txtAccountInfo.Text = "";
 
             foreach (var position in _reconcile_response.PositionList)
@@ -512,7 +507,6 @@ namespace Open_API_2._0_Sample
                 double grossProfit = pips * pipValue * volume;
                 double positionSwapMonetary = position.Swap / Math.Pow(10, 2);
                 double positionDoubleCommissionMonetary = (position.Commission * 2) / Math.Pow(10, 2);
-
                 double netProfit = grossProfit + positionDoubleCommissionMonetary + positionSwapMonetary;
                 equity += netProfit;
 
