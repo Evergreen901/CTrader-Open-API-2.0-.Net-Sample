@@ -46,7 +46,6 @@ namespace Open_API_2._0_Sample
         private IList<ProtoOALightSymbol> _symbolList;
         private ProtoOAReconcileRes _reconcile_response = null;
         private IList<ProtoOALightSymbol> _symbolListForConversion = null;
-        private ProtoOASpotEvent _spot_event = null;
         private bool _equityWorking = false;
         private long _lastBalance;
 
@@ -187,7 +186,9 @@ namespace Open_API_2._0_Sample
                         _reconcile_response = ProtoOAReconcileRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
                         break;
                     case ProtoOAPayloadType.PROTO_OA_SPOT_EVENT:
-                        _spot_event = ProtoOASpotEvent.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
+                        var spot_event = ProtoOASpotEvent.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
+                        ProtoOALightSymbol lightSymbol = GetLightSymbolById(spot_event.SymbolId);
+                        _prices[lightSymbol] = new Price(spot_event.Bid, spot_event.Ask);
                         break;
                     case ProtoOAPayloadType.PROTO_OA_SYMBOLS_FOR_CONVERSION_RES:
                         var symbols_conversion_response = ProtoOASymbolsForConversionRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
