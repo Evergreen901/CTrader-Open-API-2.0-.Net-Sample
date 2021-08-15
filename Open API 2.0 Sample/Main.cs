@@ -302,7 +302,7 @@ namespace Open_API_2._0_Sample
         {
             var msgFactory = new OpenApiMessagesFactory();
             //    var msg = msgFactory.CreateDealsListRequest(_accountID, 1526342400, 1540000000000);
-            var startDate = new DateTimeOffset(DateTime.Now.AddDays(-1));
+            var startDate = new DateTimeOffset(DateTime.Now.AddDays(-3));
             var now = new DateTimeOffset(DateTime.Now);
             var msg = msgFactory.CreateDealsListRequest(_accountID, startDate.ToUnixTimeMilliseconds(), now.ToUnixTimeMilliseconds());
             Transmit(msg);
@@ -483,12 +483,12 @@ namespace Open_API_2._0_Sample
                     {
                         if (symbol.BaseAssetId == asset)
                         {
-                            rate *= GetPrice(symbol, _symbolById[0].Digits);
+                            rate *= GetPrice(symbol, 5);
                             asset = symbol.QuoteAssetId;
                         }
                         else
                         {
-                            rate /= GetPrice(symbol, _symbolById[0].Digits);
+                            rate /= GetPrice(symbol, 5);
                             asset = symbol.BaseAssetId;
                         }
                     }
@@ -500,21 +500,21 @@ namespace Open_API_2._0_Sample
 
                 if (position.TradeData.TradeSide == ProtoOATradeSide.SELL)
                 {
-                    pos = position.Price - GetPrice(lightSymbol, _symbolById[0].Digits);
+                    pos = position.Price - GetPrice(lightSymbol, 5);
                 }
                 else
                 {
-                    pos = GetPrice(lightSymbol, _symbolById[0].Digits, true) - position.Price;
+                    pos = GetPrice(lightSymbol, 5, true) - position.Price;
                 }
                 
                 double pips = Math.Round(pos * Math.Pow(10, _symbolById[0].PipPosition), _symbolById[0].Digits - _symbolById[0].PipPosition);
-                long volume = position.TradeData.Volume / 100;
+                double volume = position.TradeData.Volume / 100.0;
                 double grossProfit = pips * pipValue * volume;
                 double positionSwapMonetary = position.Swap / Math.Pow(10, 2);
                 double positionDoubleCommissionMonetary = (position.Commission * 2) / Math.Pow(10, 2);
 
                 double netProfit = grossProfit + positionDoubleCommissionMonetary + positionSwapMonetary;
-                equity = _lastBalance + netProfit;
+                equity += netProfit;
 
                 txtAccountInfo.Text += "Symbol : " + lightSymbol.SymbolName;
                 txtAccountInfo.Text += " Direction : " + (position.TradeData.TradeSide == ProtoOATradeSide.SELL ? "Sell " : "Buy ");
