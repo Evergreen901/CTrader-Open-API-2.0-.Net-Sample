@@ -160,12 +160,16 @@ namespace Open_API_2._0_Sample
                         break;
                     case ProtoOAPayloadType.PROTO_OA_DEAL_LIST_RES:
                         var deal_list = ProtoOADealListRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
+                        long maxTimestamp = 0;
                         for (var i = deal_list.DealList.Count - 1; i >= 0; i--)
                         {
                             var deal = deal_list.DealList[i];
                             if (deal.HasClosePositionDetail == false) continue;
-                            _lastBalance = deal.ClosePositionDetail.Balance;
-                            break;
+                            if (maxTimestamp < deal.ExecutionTimestamp)
+                            {
+                                maxTimestamp = deal.ExecutionTimestamp;
+                                _lastBalance = deal.ClosePositionDetail.Balance;
+                            }
                         }
                         break;
                     case ProtoOAPayloadType.PROTO_OA_SYMBOL_BY_ID_RES:
