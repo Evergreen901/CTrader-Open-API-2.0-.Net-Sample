@@ -57,8 +57,8 @@ namespace Open_API_2._0_Sample
                 ask = y;
             }
 
-            public ulong bid { get; }
-            public ulong ask { get; }
+            public ulong bid { get; set;  }
+            public ulong ask { get; set; }
         }
 
         private Dictionary<ProtoOALightSymbol, Price> _prices = new Dictionary<ProtoOALightSymbol, Price>();
@@ -188,7 +188,19 @@ namespace Open_API_2._0_Sample
                     case ProtoOAPayloadType.PROTO_OA_SPOT_EVENT:
                         var spot_event = ProtoOASpotEvent.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
                         ProtoOALightSymbol lightSymbol = GetLightSymbolById(spot_event.SymbolId);
-                        _prices[lightSymbol] = new Price(spot_event.Bid, spot_event.Ask);
+                        Price result;
+                        if (_prices.TryGetValue(lightSymbol, out result))
+                        {
+                            if (spot_event.Bid > 0)
+                                result.bid = spot_event.Bid;
+                            if (spot_event.Ask > 0)
+                                result.bid = spot_event.Ask;
+                            _prices[lightSymbol] = result;
+                        }
+                        else
+                        {
+                            _prices[lightSymbol] = new Price(spot_event.Bid, spot_event.Ask);
+                        }
                         break;
                     case ProtoOAPayloadType.PROTO_OA_SYMBOLS_FOR_CONVERSION_RES:
                         var symbols_conversion_response = ProtoOASymbolsForConversionRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
