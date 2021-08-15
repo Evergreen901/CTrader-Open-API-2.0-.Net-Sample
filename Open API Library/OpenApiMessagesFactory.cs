@@ -447,7 +447,7 @@ namespace Open_API_Library
             _msg.SetStopPrice(stopPrice);
             return CreateMessage((uint)_msg.PayloadType, _msg.Build().ToByteString(), clientMsgId);
         }
-        public ProtoMessage CreateSubscribeForSpotsRequest(long accountId, int symbolId, string clientMsgId = null)
+        public ProtoMessage CreateSubscribeForSpotsRequest(long accountId, long symbolId, string clientMsgId = null)
         {
             var _msg = ProtoOASubscribeSpotsReq.CreateBuilder();
             _msg.SetCtidTraderAccountId(accountId);

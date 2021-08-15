@@ -42,13 +42,27 @@ namespace Open_API_2._0_Sample
         private static long testPositionId = -1;
         private IList<ProtoOACtidTraderAccount> _accounts;
         private List<ProtoOATrader> _traders;
-        private IList<ProtoOASymbol> _symbols;
+        private IList<ProtoOASymbol> _symbolById;
         private IList<ProtoOALightSymbol> _symbolList;
         private ProtoOAReconcileRes _reconcile_response = null;
         private IList<ProtoOALightSymbol> _symbolListForConversion = null;
         private ProtoOASpotEvent _spot_event = null;
         private bool _equityWorking = false;
         private long _lastBalance;
+
+        struct Price
+        {
+            public Price(double x, double y)
+            {
+                bid = x;
+                ask = y;
+            }
+
+            public double bid { get; }
+            public double ask { get; }
+        }
+
+        private IDictionary<ProtoOALightSymbol, Price> _prices;
 
         public ProtoOALightSymbol GetLightSymbolById(long symbolId)
         {
@@ -162,7 +176,7 @@ namespace Open_API_2._0_Sample
                         break;
                     case ProtoOAPayloadType.PROTO_OA_SYMBOL_BY_ID_RES:
                         var symbols= ProtoOASymbolByIdRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
-                        _symbols = symbols.SymbolList;
+                        _symbolById = symbols.SymbolList;
                         break;
                     case ProtoOAPayloadType.PROTO_OA_SYMBOLS_LIST_RES:
                         var symbols_list = ProtoOASymbolsListRes.CreateBuilder().MergeFrom(protoMessage.Payload).Build();
@@ -394,6 +408,27 @@ namespace Open_API_2._0_Sample
             Transmit(msg);
         }
 
+        private double GetPrice(ProtoOALightSymbol symbol, bool isBid = false)
+        {
+            Price result;
+
+            if (_prices.TryGetValue(symbol, out result))
+            {
+                return isBid ? result.bid : result.ask;
+            }
+
+            var msgFactory = new OpenApiMessagesFactory();
+            var msg = msgFactory.CreateSubscribeForSpotsRequest(_accountID, symbol.SymbolId);
+            Transmit(msg);
+
+            while (_prices.TryGetValue(symbol, out result))
+            {
+                Thread.Sleep(100);                
+            }
+
+            return isBid ? result.bid : result.ask;
+        }
+
         private void timer3_Tick(object sender, EventArgs e)
         {
             if (_equityWorking == false)
@@ -409,29 +444,69 @@ namespace Open_API_2._0_Sample
 
             foreach (var position in _reconcile_response.PositionList)
             {
-                _symbols = null;
+                _symbolById = null;
                 msg = msgFactory.CreateSymbolByIdRequest(_accountID, position.TradeData.SymbolId);
                 Transmit(msg);
 
-                while (_symbols == null)
+                while (_symbolById == null)
                 {
                     Thread.Sleep(100);
                 }
 
-                var lightSymbol = GetLightSymbolById(_symbols[0].SymbolId);
+                var lightSymbol = GetLightSymbolById(_symbolById[0].SymbolId);
+                double tickSize = 1 / Math.Pow(10, _symbolById[0].Digits);
+                double pipSize = 1 / Math.Pow(10, _symbolById[0].PipPosition);
+                double tickValue = tickSize;
+                double pipValue;
+                double pos;
 
-                double tickSize = 1 / Math.Pow(10, _symbols[0].Digits);
-                double pipSize = 1 / Math.Pow(10, _symbols[0].PipPosition);
-                double tickValue = _spot_event.Ask;
-                double pipValue = tickValue * (pipSize / tickSize);
+                if (lightSymbol.QuoteAssetId != 2)
+                {
+                    _symbolListForConversion = null;
+                    msg = msgFactory.CreateSymbolsForConversionReqeust(_accountID, lightSymbol.QuoteAssetId, 2);
+                    Transmit(msg);
 
-                double pos = position.Price - _spot_event.Ask;
-                double pips = Math.Round(pos * Math.Pow(10, _symbols[0].PipPosition), _symbols[0].Digits - _symbols[0].PipPosition);
+                    while (_symbolListForConversion == null)
+                    {
+                        Thread.Sleep(100);
+                    }
+
+                    long asset = lightSymbol.QuoteAssetId;
+                    double rate = 1;
+
+                    foreach (var symbol in _symbolListForConversion)
+                    {
+                        if (symbol.BaseAssetId == asset)
+                        {
+                            rate *= GetPrice(symbol) / 100000;
+                            asset = symbol.QuoteAssetId;
+                        }
+                        else
+                        {
+                            rate /= GetPrice(symbol) / 100000;
+                            asset = symbol.BaseAssetId;
+                        }
+                    }
+
+                    tickValue = tickSize * rate;
+                }
+
+                pipValue = tickValue * (pipSize / tickSize);
+
+                if (position.TradeData.TradeSide == ProtoOATradeSide.BUY)
+                {
+                    pos = position.Price - GetPrice(lightSymbol) / 100000;
+                }
+                else
+                {
+                    pos = GetPrice(lightSymbol, true) / 100000 - position.Price;
+                }
+                
+                double pips = Math.Round(pos * Math.Pow(10, _symbolById[0].PipPosition), _symbolById[0].Digits - _symbolById[0].PipPosition);
                 long volume = position.TradeData.Volume / 100;
                 double grossProfit = pips * pipValue * volume;
-
-                double positionSwapMonetary = position.Swap / Math.Pow(10, 8);
-                double positionDoubleCommissionMonetary = (position.Commission * 2) / Math.Pow(10, 8);
+                double positionSwapMonetary = position.Swap / Math.Pow(10, 2);
+                double positionDoubleCommissionMonetary = (position.Commission * 2) / Math.Pow(10, 2);
 
                 double netProfit = grossProfit + positionDoubleCommissionMonetary + positionSwapMonetary;
 
