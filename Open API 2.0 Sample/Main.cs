@@ -193,7 +193,7 @@ namespace Open_API_2._0_Sample
                             if (spot_event.Bid > 0)
                                 result.bid = spot_event.Bid;
                             if (spot_event.Ask > 0)
-                                result.bid = spot_event.Ask;
+                                result.ask = spot_event.Ask;
                             _prices[lightSymbol] = result;
                         }
                         else
