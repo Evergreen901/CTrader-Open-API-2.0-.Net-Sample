@@ -51,6 +51,7 @@
             this.lblVolume = new System.Windows.Forms.Label();
             this.btnClear = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.labelNetProfit = new System.Windows.Forms.Label();
             this.btnOrderHistory = new System.Windows.Forms.Button();
             this.lblAccounts = new System.Windows.Forms.Label();
             this.cbAccounts = new System.Windows.Forms.ComboBox();
@@ -65,7 +66,6 @@
             this.txtMessages = new System.Windows.Forms.TextBox();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.timer3 = new System.Windows.Forms.Timer(this.components);
-            this.labelNetProfit = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -319,6 +319,14 @@
             this.splitContainer1.SplitterDistance = 364;
             this.splitContainer1.TabIndex = 23;
             // 
+            // labelNetProfit
+            // 
+            this.labelNetProfit.AutoSize = true;
+            this.labelNetProfit.Location = new System.Drawing.Point(808, 343);
+            this.labelNetProfit.Name = "labelNetProfit";
+            this.labelNetProfit.Size = new System.Drawing.Size(0, 13);
+            this.labelNetProfit.TabIndex = 33;
+            // 
             // btnOrderHistory
             // 
             this.btnOrderHistory.Location = new System.Drawing.Point(620, 338);
@@ -436,15 +444,6 @@
             this.timer3.Enabled = true;
             this.timer3.Interval = 2000;
             this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
-            // 
-            // labelNetProfit
-            // 
-            this.labelNetProfit.AutoSize = true;
-            this.labelNetProfit.Location = new System.Drawing.Point(808, 343);
-            this.labelNetProfit.Name = "labelNetProfit";
-            this.labelNetProfit.Size = new System.Drawing.Size(60, 13);
-            this.labelNetProfit.TabIndex = 33;
-            this.labelNetProfit.Text = "Net Profit : ";
             // 
             // Main
             // 

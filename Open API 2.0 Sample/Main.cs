@@ -520,7 +520,7 @@ namespace Open_API_2._0_Sample
                 txtAccountInfo.Text += " Direction : " + (position.TradeData.TradeSide == ProtoOATradeSide.SELL ? "Sell " : "Buy ");
                 txtAccountInfo.Text += " Entry Price : " + position.Price;
                 var closedTime = DateTimeOffset.FromUnixTimeMilliseconds(position.TradeData.OpenTimestamp);
-                txtAccountInfo.Text += " CreatedAt : " + closedTime;
+                txtAccountInfo.Text += " Created : " + closedTime;
                 txtAccountInfo.Text += " NetProfit : " + netProfit.ToString("N2");
                 txtAccountInfo.Text += Environment.NewLine;
             }
