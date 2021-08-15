@@ -444,6 +444,9 @@ namespace Open_API_2._0_Sample
                 Thread.Sleep(100);
             }
 
+            double equity = _lastBalance;
+            txtAccountInfo.Text = "";
+
             foreach (var position in _reconcile_response.PositionList)
             {
                 _symbolById = null;
@@ -511,9 +514,18 @@ namespace Open_API_2._0_Sample
                 double positionDoubleCommissionMonetary = (position.Commission * 2) / Math.Pow(10, 2);
 
                 double netProfit = grossProfit + positionDoubleCommissionMonetary + positionSwapMonetary;
+                equity = _lastBalance + netProfit;
 
-                labelNetProfit.Text = "NetProfit : " + netProfit.ToString("N2");
+                txtAccountInfo.Text += "Symbol : " + lightSymbol.SymbolName;
+                txtAccountInfo.Text += " Direction : " + (position.TradeData.TradeSide == ProtoOATradeSide.SELL ? "Sell " : "Buy ");
+                txtAccountInfo.Text += " Entry Price : " + position.Price;
+                var closedTime = DateTimeOffset.FromUnixTimeMilliseconds(position.TradeData.OpenTimestamp);
+                txtAccountInfo.Text += " CreatedAt : " + closedTime;
+                txtAccountInfo.Text += " NetProfit : " + netProfit.ToString("N2");
+                txtAccountInfo.Text += Environment.NewLine;
             }
+
+            labelNetProfit.Text = "Equity : " + equity.ToString("N2");
         }
 
         private void btnSymbolCategory_Click(object sender, EventArgs e)

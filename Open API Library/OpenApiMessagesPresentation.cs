@@ -107,16 +107,6 @@ namespace Connect_API.Trading
                     {
                         var deal = deal_list.DealList[i];
                         if (deal.HasClosePositionDetail == false) continue;
-                        /*sbDeals.Append("ID: " + deal.DealId + Environment.NewLine);
-                        sbDeals.Append("Status: " + deal.DealStatus + Environment.NewLine);
-                        sbDeals.Append("Volume: " + deal.Volume + Environment.NewLine);
-                        sbDeals.Append("ClosePositionDetail: " + deal.ClosePositionDetail.ToString() + Environment.NewLine);
-                        sbDeals.Append("filledVolume: " + deal.FilledVolume + Environment.NewLine);
-                        sbDeals.Append("executionTimestamp: " + deal.ExecutionTimestamp + Environment.NewLine);
-                        sbDeals.Append("executionPrice: " + deal.ExecutionPrice + Environment.NewLine);
-                        sbDeals.Append("tradeSide: " + deal.TradeSide + Environment.NewLine);
-                        sbDeals.Append("baseToUsdConversionRate: " + deal.BaseToUsdConversionRate + Environment.NewLine);
-                        sbDeals.Append("commission: " + deal.Commission + Environment.NewLine);*/
                         sbDeals.Append("balance: " + deal.ClosePositionDetail.Balance + Environment.NewLine);
                         var closedTime = DateTimeOffset.FromUnixTimeMilliseconds(deal.ExecutionTimestamp);
                         sbDeals.Append("closedTime: " + closedTime.ToString("yyyy-MM-dd hh:mm:ss.fff") + Environment.NewLine);
