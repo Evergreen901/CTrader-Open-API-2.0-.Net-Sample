@@ -511,8 +511,7 @@ namespace Open_API_2._0_Sample
 
                 double netProfit = grossProfit + positionDoubleCommissionMonetary + positionSwapMonetary;
 
-                txtAccountInfo.Text += "netProfit : " + netProfit.ToString();
-                txtAccountInfo.Text += Environment.NewLine;
+                labelNetProfit.Text = "NetProfit : " + netProfit.ToString("N2");
             }
         }
 

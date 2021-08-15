@@ -51,7 +51,6 @@
             this.lblVolume = new System.Windows.Forms.Label();
             this.btnClear = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.btnSymbolCategory = new System.Windows.Forms.Button();
             this.btnOrderHistory = new System.Windows.Forms.Button();
             this.lblAccounts = new System.Windows.Forms.Label();
             this.cbAccounts = new System.Windows.Forms.ComboBox();
@@ -66,6 +65,7 @@
             this.txtMessages = new System.Windows.Forms.TextBox();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.timer3 = new System.Windows.Forms.Timer(this.components);
+            this.labelNetProfit = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -279,7 +279,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.btnSymbolCategory);
+            this.splitContainer1.Panel1.Controls.Add(this.labelNetProfit);
             this.splitContainer1.Panel1.Controls.Add(this.btnOrderHistory);
             this.splitContainer1.Panel1.Controls.Add(this.lblAccounts);
             this.splitContainer1.Panel1.Controls.Add(this.cbAccounts);
@@ -318,16 +318,6 @@
             this.splitContainer1.Size = new System.Drawing.Size(1186, 575);
             this.splitContainer1.SplitterDistance = 364;
             this.splitContainer1.TabIndex = 23;
-            // 
-            // btnSymbolCategory
-            // 
-            this.btnSymbolCategory.Location = new System.Drawing.Point(782, 338);
-            this.btnSymbolCategory.Name = "btnSymbolCategory";
-            this.btnSymbolCategory.Size = new System.Drawing.Size(136, 23);
-            this.btnSymbolCategory.TabIndex = 33;
-            this.btnSymbolCategory.Text = "Get SymbolCategory";
-            this.btnSymbolCategory.UseVisualStyleBackColor = true;
-            this.btnSymbolCategory.Click += new System.EventHandler(this.btnSymbolCategory_Click);
             // 
             // btnOrderHistory
             // 
@@ -447,6 +437,15 @@
             this.timer3.Interval = 2000;
             this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
             // 
+            // labelNetProfit
+            // 
+            this.labelNetProfit.AutoSize = true;
+            this.labelNetProfit.Location = new System.Drawing.Point(808, 343);
+            this.labelNetProfit.Name = "labelNetProfit";
+            this.labelNetProfit.Size = new System.Drawing.Size(60, 13);
+            this.labelNetProfit.TabIndex = 33;
+            this.labelNetProfit.Text = "Net Profit : ";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -504,7 +503,7 @@
         private System.Windows.Forms.TextBox txtMessages;
         private System.Windows.Forms.Button btnOrderHistory;
         private System.Windows.Forms.Timer timer3;
-        private System.Windows.Forms.Button btnSymbolCategory;
+        private System.Windows.Forms.Label labelNetProfit;
     }
 }
 
