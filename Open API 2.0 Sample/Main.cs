@@ -51,17 +51,17 @@ namespace Open_API_2._0_Sample
 
         struct Price
         {
-            public Price(double x, double y)
+            public Price(ulong x, ulong y)
             {
                 bid = x;
                 ask = y;
             }
 
-            public double bid { get; }
-            public double ask { get; }
+            public ulong bid { get; }
+            public ulong ask { get; }
         }
 
-        private IDictionary<ProtoOALightSymbol, Price> _prices;
+        private Dictionary<ProtoOALightSymbol, Price> _prices = new Dictionary<ProtoOALightSymbol, Price>();
 
         public ProtoOALightSymbol GetLightSymbolById(long symbolId)
         {
@@ -409,25 +409,26 @@ namespace Open_API_2._0_Sample
             Transmit(msg);
         }
 
-        private double GetPrice(ProtoOALightSymbol symbol, bool isBid = false)
+        private double GetPrice(ProtoOALightSymbol symbol, long digits, bool isBid = false)
         {
             Price result;
+            double nDigits = Math.Pow(10, digits);
 
             if (_prices.TryGetValue(symbol, out result))
             {
-                return isBid ? result.bid : result.ask;
+                return isBid ? result.bid / nDigits : result.ask / nDigits;
             }
 
             var msgFactory = new OpenApiMessagesFactory();
             var msg = msgFactory.CreateSubscribeForSpotsRequest(_accountID, symbol.SymbolId);
             Transmit(msg);
 
-            while (_prices.TryGetValue(symbol, out result))
+            while (_prices.TryGetValue(symbol, out result) == false)
             {
-                Thread.Sleep(100);                
+                Thread.Sleep(100);      
             }
 
-            return isBid ? result.bid : result.ask;
+            return isBid ? result.bid / nDigits : result.ask / nDigits;
         }
 
         private void timer3_Tick(object sender, EventArgs e)
@@ -461,10 +462,10 @@ namespace Open_API_2._0_Sample
                 double pipValue;
                 double pos;
 
-                if (lightSymbol.QuoteAssetId != 2)
+                if (lightSymbol.QuoteAssetId != 4)
                 {
                     _symbolListForConversion = null;
-                    msg = msgFactory.CreateSymbolsForConversionReqeust(_accountID, lightSymbol.QuoteAssetId, 2);
+                    msg = msgFactory.CreateSymbolsForConversionReqeust(_accountID, lightSymbol.QuoteAssetId, 4);
                     Transmit(msg);
 
                     while (_symbolListForConversion == null)
@@ -479,12 +480,12 @@ namespace Open_API_2._0_Sample
                     {
                         if (symbol.BaseAssetId == asset)
                         {
-                            rate *= GetPrice(symbol) / 100000;
+                            rate *= GetPrice(symbol, _symbolById[0].Digits);
                             asset = symbol.QuoteAssetId;
                         }
                         else
                         {
-                            rate /= GetPrice(symbol) / 100000;
+                            rate /= GetPrice(symbol, _symbolById[0].Digits);
                             asset = symbol.BaseAssetId;
                         }
                     }
@@ -494,13 +495,13 @@ namespace Open_API_2._0_Sample
 
                 pipValue = tickValue * (pipSize / tickSize);
 
-                if (position.TradeData.TradeSide == ProtoOATradeSide.BUY)
+                if (position.TradeData.TradeSide == ProtoOATradeSide.SELL)
                 {
-                    pos = position.Price - GetPrice(lightSymbol) / 100000;
+                    pos = position.Price - GetPrice(lightSymbol, _symbolById[0].Digits);
                 }
                 else
                 {
-                    pos = GetPrice(lightSymbol, true) / 100000 - position.Price;
+                    pos = GetPrice(lightSymbol, _symbolById[0].Digits, true) - position.Price;
                 }
                 
                 double pips = Math.Round(pos * Math.Pow(10, _symbolById[0].PipPosition), _symbolById[0].Digits - _symbolById[0].PipPosition);
